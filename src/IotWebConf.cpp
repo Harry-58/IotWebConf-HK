@@ -33,6 +33,10 @@ IotWebConf::IotWebConf(
     const char* initialApPassword, const char* configVersion)
 {
   this->_thingNameParameter.defaultValue = defaultThingName;
+  if (strlen(this->_thingName) < 3){  //UPDATE:HK  Eingefügt weil _thingName beim Start als AP leer war ???
+    strncpy(this->_thingName, defaultThingName, sizeof(this->_thingName));
+    Serial.println ("_thingName direkt setzen weil leer (IOTWebConf)!!!");
+  }
   this->_dnsServer = dnsServer;
   this->_webServerWrapper = webServerWrapper;
   this->_initialApPassword = initialApPassword;
@@ -73,6 +77,9 @@ bool IotWebConf::init()
   if (this->_configPin >= 0)
   {
     pinMode(this->_configPin, INPUT_PULLUP);
+    if (!digitalRead(this->_configPin)) {  //UPDATE:HK entprellen
+       delay(50);
+    }
     this->_forceDefaultPassword = (digitalRead(this->_configPin) == LOW);
   }
   if (IOTWEBCONF_STATUS_ENABLED)
@@ -290,7 +297,7 @@ void IotWebConf::handleConfig(WebRequestWrapper* webRequestWrapper)
     webRequestWrapper->send(200, "text/html; charset=UTF-8", "");
 
     String content = htmlFormatProvider->getHead();
-    content.replace("{v}", "Config ESP");
+    content.replace("{v}",  this->getThingName() + (String)" - Konfig");  //UPDATE:HK  Titel aus Thingname
     content += htmlFormatProvider->getScript();
     content += htmlFormatProvider->getStyle();
     content += htmlFormatProvider->getHeadExtension();

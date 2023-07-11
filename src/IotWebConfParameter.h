@@ -20,6 +20,7 @@
 #ifdef IOTWEBCONF_ENABLE_JSON
 # include <ArduinoJson.h>
 #endif
+// https://www.w3docs.com/snippets/html/input-types-for-html-forms.html
 
 const char IOTWEBCONF_HTML_FORM_GROUP_START[] PROGMEM =
   "<fieldset id='{i}'><legend>{b}</legend>\n";
@@ -27,12 +28,12 @@ const char IOTWEBCONF_HTML_FORM_GROUP_END[] PROGMEM =
   "</fieldset>\n";
 
 const char IOTWEBCONF_HTML_FORM_PARAM[] PROGMEM =
-  "<div class='{s}'><label for='{i}'>{b}</label><input type='{t}' id='{i}' "
-  "name='{i}' {l} placeholder='{p}' value='{v}' {c}/>"
+  "<div class='param_{t} {i} {s}'><label for='{i}'>{b}</label><div class='param_{i}'><input type='{t}' id='{i}' " //Update:HK class ergänzen: param_{t} {i}   War nur {s}  
+  "name='{i}' {l} placeholder='{p}' value='{v}' {c}/></div>"
   "<div class='em'>{e}</div></div>\n";
 
 const char IOTWEBCONF_HTML_FORM_SELECT_PARAM[] PROGMEM =
-  "<div class='{s}'><label for='{i}'>{b}</label><select id='{i}' "
+  "<div class='param_{t} {i} {s}'><label for='{i}'>{b}</label><select id='{i}' " //Update:HK class ergänzen: param_{t} {i}   War nur {s}
   "name='{i}' {c}/>\n{o}"
   "</select><div class='em'>{e}</div></div>\n";
 const char IOTWEBCONF_HTML_FORM_OPTION[] PROGMEM =
