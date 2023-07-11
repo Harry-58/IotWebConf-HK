@@ -1,0 +1,91 @@
+
+
+-------------------------------------
+*** IotWebConf.h ***
+
+## 36  + charset=\"utf-8\", lang=\"de\
+* const char IOTWEBCONF_HTML_HEAD[] PROGMEM         = "<!DOCTYPE html><html lang=\"de\"><head><meta charset=\"utf-8\", name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\"/><title>{v}</title>\n";   //Update:HK charset=\"utf-8\", ergänzt
+
+## 40  + id='content'
+const char IOTWEBCONF_HTML_BODY_INNER[] PROGMEM   = "<div id='content' style='text-align:left;display:inline-block;min-width:260px;'>\n";
+
+-------------------------------------
+*** IotWebConf.cpp ***
+
+## 36 
++  if (strlen(this->_thingName) < 3){  //UPDATE:HK  Eingefügt weil _thingName beim Start als AP leer war ???
++    strncpy(this->_thingName, defaultThingName, sizeof(this->_thingName));
++    Serial.println ("_thingName direkt setzen weil leer (IOTWebConf)!!!");
++  }
+
+## 80
++    if (!digitalRead(this->_configPin)) {  //UPDATE:HK entprellen
++       delay(50);
+*    }
+
+## 300
++    content.replace("{v}",  this->getThingName() + (String)" - Konfig");  //UPDATE:HK  Titel aus Thingname
+
+
+-------------------------------------
+*** IotWebConfParameter.h ***
+
+## 31 + param_{t},{i},
+const char IOTWEBCONF_HTML_FORM_PARAM[] PROGMEM =
+*    "<div class='param_{t} {i} {s}'><label for='{i}'>{b}</label><input type='{t}' id='{i}' " //Update:HK class ergänzen: param_{t} {i}   War nur {s}
+
+
+## 35 + param_{t},{i},
+const char IOTWEBCONF_HTML_FORM_SELECT_PARAM[] PROGMEM =
+*  "<div class='param_{t} {i} {s}'><label for='{i}'>{b}</label><select id='{i}' " //Update:HK class ergänzen: param_{t},{i}.  War nur {s}
+
+
+-------------------------------------
+*** IotWebConfParameter.cpp ***
+##324
++
+  //snprintf(parLength, 12, "%d", current->getLength()-1);
+  //pitem.replace("{l}", parLength);
+  int length = current->getLength()-1;     //Update:HK   
+  if (length > 0)
+  {
+    char parLength[11];
+    snprintf(parLength, 11, "%d", length - 1); // To allow "\0" at the end of the string.
+    String maxLength = String("maxlength=") + parLength;
+    pitem.replace("{l}", maxLength);
+  }
+  else
+  {
+    pitem.replace("{l}", "");
+  }
+
+-------------------------------------
+*** IotWebConfTParameter.h ***
+
+## 390
++ virtual void setcustomHtml(const char* customHtml) { this->customHtml = customHtml; }  //update:HK
+
+-------------------------------------
+*** IotWebConfTParameterBuilder.h ***
+## 33
+      ParamType(this->_id, this->_label, this->_defaultValue /*,this->_customHtml*/)); //UPDATE: HK  dann geht's nicht mehr
+      
+##42
++   Builder<ParamType>& customHtml(const char* customHtml)
+    { this-> _customHtml = customHtml; return static_cast<Builder<ParamType>&>(*this); }  //UPDATE: HK
+    
+##53
++   const char* _customHtml; //UPDATE: HK
+
+
+##76
++   Builder<ParamType>& customHtml(const char* customHtml) { this-> _customHtml = customHtml; return static_cast<Builder<ParamType>&>(*this); }  //UPDATE: HK
+
+
+##92
++     instance->setcustomHtml(this->_customHtml);  //UPDATE: HK
+
+##102
++  const char* _customHtml = nullptr;  //UPDATE: HK
+
+
