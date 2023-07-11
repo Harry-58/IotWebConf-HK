@@ -28,7 +28,7 @@ public:
   virtual ParamType build() const
   {
     ParamType instance = std::move(
-      ParamType(this->_id, this->_label, this->_defaultValue));
+      ParamType(this->_id, this->_label, this->_defaultValue /*,this->_customHtml*/)); //UPDATE: HK  dann geht's nicht mehr
     this->apply(&instance);
     return instance;
   }
@@ -37,6 +37,8 @@ public:
     { this->_label = label; return static_cast<Builder<ParamType>&>(*this); }
   Builder<ParamType>& defaultValue(typename ParamType::DefaultValueType defaultValue)
     { this->_defaultValue = defaultValue; return static_cast<Builder<ParamType>&>(*this); }
+  Builder<ParamType>& customHtml(const char* customHtml)
+    { this-> _customHtml = customHtml; return static_cast<Builder<ParamType>&>(*this); }  //UPDATE: HK
 
 protected:
   virtual ParamType* apply(ParamType* instance) const
@@ -46,6 +48,7 @@ protected:
   const char* _label;
   const char* _id;
   typename ParamType::DefaultValueType _defaultValue;
+  const char* _customHtml; //UPDATE: HK
 };
 
 template <typename ParamType>
@@ -68,6 +71,7 @@ public:
   Builder<ParamType>& max(ValueType max) { this->_maxDefined = true; this->_max = max; return static_cast<Builder<ParamType>&>(*this); }
   Builder<ParamType>& step(ValueType step) { this->_step = step; return static_cast<Builder<ParamType>&>(*this); }
   Builder<ParamType>& placeholder(const char* placeholder) { this->_placeholder = placeholder; return static_cast<Builder<ParamType>&>(*this); }
+  Builder<ParamType>& customHtml(const char* customHtml) { this-> _customHtml = customHtml; return static_cast<Builder<ParamType>&>(*this); }  //UPDATE: HK
 
 protected:
   virtual ParamType* apply(
@@ -83,6 +87,7 @@ protected:
     }
     instance->setStep(this->_step);
     instance->setPlaceholder(this->_placeholder);
+    instance->setcustomHtml(this->_customHtml);  //UPDATE: HK
     return instance;
   }
 
@@ -92,6 +97,7 @@ protected:
   ValueType _max;
   ValueType _step = 0;
   const char* _placeholder = nullptr;
+  const char* _customHtml = nullptr;  //UPDATE: HK
 };
 
 template <typename ValueType, int base>

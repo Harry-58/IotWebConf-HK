@@ -387,6 +387,8 @@ public:
    *   so one can customize the rendered outcome of this particular item.
    */
   const char* customHtml = nullptr;
+  virtual void setcustomHtml(const char* customHtml) { this->customHtml = customHtml; }  //update:HK
+
 
   /**
    * Used when rendering the input field. Is is overridden by different
