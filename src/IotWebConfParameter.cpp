@@ -321,8 +321,20 @@ String TextParameter::renderHtml(
   pitem.replace("{t}", type);
   pitem.replace("{i}", current->getId());
   pitem.replace("{p}", current->placeholder == nullptr ? "" : current->placeholder);
-  snprintf(parLength, 12, "%d", current->getLength()-1);
-  pitem.replace("{l}", parLength);
+  //snprintf(parLength, 12, "%d", current->getLength()-1);
+  //pitem.replace("{l}", parLength);
+  int length = current->getLength()-1;     //Update:HK
+  if (length > 0)
+  {
+    char parLength[11];
+    snprintf(parLength, 11, "%d", length - 1); // To allow "\0" at the end of the string.
+    String maxLength = String("maxlength=") + parLength;
+    pitem.replace("{l}", maxLength);
+  }
+  else
+  {
+    pitem.replace("{l}", "");
+  }
   if (hasValueFromPost)
   {
     // -- Value from previous submit
