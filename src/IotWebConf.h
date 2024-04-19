@@ -291,7 +291,7 @@ public:
    * All pending EEPROM manipulations are done by the time this method is called.
    * Should be called before init()!
    */
-  void setConfigSavedCallback(std::function<void()> func);
+  void setConfigSavedCallback(std::function<void(uint16_t mode)> func);   //Update:HK SaveConfig mit Parameter
 
   /**
    * Specify a callback method, that will be called when form validation is required.
@@ -456,7 +456,7 @@ public:
   };
 
   /**
-   * 
+   *
    */
   void startupOffLine() { this->_startupOffLine = true; }
 
@@ -536,7 +536,7 @@ public:
    * Also note, that saveConfig writes to EEPROM, and EEPROM can be written only some thousand times
    *  in the lifetime of an ESP8266 module.
    */
-  void saveConfig();
+  void saveConfig(uint16_t mode);  //Update:HK SaveConfig mit Parameter
 
   /**
    * Loads all configuration from the EEPROM without initializing the system.
@@ -598,8 +598,8 @@ private:
   unsigned long _apStartTimeMs = 0;
   ApConnectionState _apConnectionState = NoConnections;
   std::function<void()> _wifiConnectionCallback = nullptr;
-  std::function<void(int)> _configSavingCallback = nullptr;
-  std::function<void()> _configSavedCallback = nullptr;
+  std::function<void(int)> _configSavingCallback = nullptr;  //Update:HK SaveConfig mit Parameter
+  std::function<void(uint16_t)> _configSavedCallback = nullptr;
   std::function<bool(WebRequestWrapper* webRequestWrapper)> _formValidator = nullptr;
   std::function<void(const char*, const char*)> _apConnectionHandler =
       &(IotWebConf::connectAp);

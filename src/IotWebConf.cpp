@@ -171,7 +171,7 @@ bool IotWebConf::loadConfig()
   return result;
 }
 
-void IotWebConf::saveConfig()
+void IotWebConf::saveConfig(uint16_t mode)   //Update:HK SaveConfig mit Parameter
 {
   int size = this->initConfig();
   if (this->_configSavingCallback != nullptr)
@@ -200,7 +200,7 @@ void IotWebConf::saveConfig()
 
   if (this->_configSavedCallback != nullptr)
   {
-    this->_configSavedCallback();
+    this->_configSavedCallback(mode); //Update:HK SaveConfig mit Parameter
   }
 }
 
@@ -249,7 +249,7 @@ void IotWebConf::setConfigSavingCallback(std::function<void(int size)> func)
   this->_configSavingCallback = func;
 }
 
-void IotWebConf::setConfigSavedCallback(std::function<void()> func)
+void IotWebConf::setConfigSavedCallback(std::function<void(uint16_t mode)> func) //Update:HK SaveConfig mit Parameter
 {
   this->_configSavedCallback = func;
 }
@@ -350,7 +350,7 @@ void IotWebConf::handleConfig(WebRequestWrapper* webRequestWrapper)
     this->_systemParameters.update(webRequestWrapper);
     this->_customParameterGroups.update(webRequestWrapper);
 
-    this->saveConfig();
+    this->saveConfig(1);  //Update:HK SaveConfig mit Parameter
 
     String page = htmlFormatProvider->getHead();
     page.replace("{v}", "Config ESP");

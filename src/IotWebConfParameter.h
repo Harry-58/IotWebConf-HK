@@ -28,7 +28,7 @@ const char IOTWEBCONF_HTML_FORM_GROUP_END[] PROGMEM =
   "</fieldset>\n";
 
 const char IOTWEBCONF_HTML_FORM_PARAM[] PROGMEM =
-  "<div class='param_{t} {i} {s}'><label for='{i}'>{b}</label><div class='param_{i}'><input type='{t}' id='{i}' " //Update:HK class ergänzen: param_{t} {i}   War nur {s}  
+  "<div class='param_{t} {i} {s}'><label for='{i}'>{b}</label><div class='param_{i}'><input type='{t}' id='{i}' " //Update:HK class ergänzen: param_{t} {i}   War nur {s}
   "name='{i}' {l} placeholder='{p}' value='{v}' {c}/></div>"
   "<div class='em'>{e}</div></div>\n";
 
@@ -84,7 +84,7 @@ public:
 
   /**
    * This method will create the HTML form item for the config portal.
-   * 
+   *
    * @dataArrived - True if there was a form post, where (some) form
    *   data arrived from the client.
    * @webRequestWrapper - The webRequestWrapper, that will send the rendered content to the client.
@@ -95,7 +95,7 @@ public:
   /**
    * New value arrived from the form post. The value should be stored in the
    *   in this config item.
-   * 
+   *
    * @webRequestWrapper - The webRequestWrapper, that will send the rendered content to the client.
    *   The webRequestWrapper->hasArg() and webRequestWrapper->arg() methods should be used in the
    *   implementations.
@@ -116,7 +116,7 @@ public:
 
 #ifdef IOTWEBCONF_ENABLE_JSON
   /**
-   * 
+   *
    */
   virtual void loadFromJson(JsonObject jsonObject) = 0;
 #endif
@@ -428,6 +428,61 @@ protected:
   // Overrides
   virtual String renderHtml(
     bool dataArrived, bool hasValueFromPost, String valueFromPost) override;
+
+private:
+  friend class IotWebConf;
+};
+///////////////////////////////////////////////////////////////////////////////
+//Update:HK   https://github.com/prampec/IotWebConf/compare/master...minou65:IotWebConf:master
+/**
+ * Date parameter is an option parameter, that rendered as HTML Date picker.
+ */
+class DateParameter : public TextParameter {
+public:
+  /**
+   * (See TextParameter for arguments!)
+   */
+  DateParameter(
+      const char* label, const char* id, char* valueBuffer, int length,
+      const char* defaultValue = nullptr)
+      : iotwebconf::TextParameter(
+            label, id, valueBuffer, length, defaultValue, nullptr, nullptr) {
+  }
+
+protected:
+  virtual String renderHtml(
+      bool dataArrived, bool hasValueFromPost, String valueFromPost) override
+  {
+    return TextParameter::renderHtml("date", hasValueFromPost, valueFromPost);
+  };
+
+private:
+  friend class IotWebConf;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Time parameter is an option parameter, that rendered as HTML time picker.
+ */
+class TimeParameter : public TextParameter {
+public:
+  /**
+   * (See TextParameter for arguments!)
+   */
+  TimeParameter(
+      const char* label, const char* id, char* valueBuffer, int length,
+      const char* defaultValue = nullptr)
+      : iotwebconf::TextParameter(
+            label, id, valueBuffer, length, defaultValue, nullptr, nullptr) {
+  }
+
+protected:
+  virtual String renderHtml(
+      bool dataArrived, bool hasValueFromPost, String valueFromPost) override
+  {
+    return TextParameter::renderHtml("time", hasValueFromPost, valueFromPost);
+  };
 
 private:
   friend class IotWebConf;

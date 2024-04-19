@@ -349,8 +349,8 @@ String TextParameter::renderHtml(
       "{c}", current->customHtml == nullptr ? "" : current->customHtml);
   pitem.replace(
       "{s}",
-      current->errorMessage == nullptr ? "" : "de"); // Div style class.
-  pitem.replace(
+      current->errorMessage == nullptr ? current->getId() : "de"); //Update:HK 	  Div style class.   https://github.com/prampec/IotWebConf/compare/master...minou65:IotWebConf:master
+  pitem.replace(                                       
       "{e}",
       current->errorMessage == nullptr ? "" : current->errorMessage);
 
