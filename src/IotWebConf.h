@@ -33,7 +33,7 @@
 #endif
 
 // -- HTML page fragments
-const char IOTWEBCONF_HTML_HEAD[] PROGMEM         = "<!DOCTYPE html><html lang=\"de\"><head><meta charset=\"utf-8\", name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\"/>\n<title>{v}</title>\n";   //Update:HK charset=\"utf-8\", ergänzt
+const char IOTWEBCONF_HTML_HEAD[] PROGMEM         = "<!DOCTYPE html><html lang=\"de\"><head><meta charset=\"utf-8\"><meta  name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\">\n<title>{v}</title>\n";   //Update:HK charset=\"utf-8\", ergänzt
 const char IOTWEBCONF_HTML_SCRIPT_INNER[] PROGMEM = "function c(l){document.getElementById('s').value=l.innerText||l.textContent;document.getElementById('p').focus();}; function pw(id) { var x=document.getElementById(id); if(x.type==='password') {x.type='text';} else {x.type='password';} };";
 const char IOTWEBCONF_HTML_STYLE_INNER[] PROGMEM  = ".de{background-color:#ffaaaa;} .em{font-size:0.8em;color:#bb0000;padding-bottom:0px;} .c{text-align: center;} div,input,select{padding:5px;font-size:1em;} input{width:95%;} select{width:100%} input[type=checkbox]{width:auto;scale:1.5;margin:10px;} body{text-align: center;font-family:verdana;} button{border:0;border-radius:0.3rem;background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;} fieldset{border-radius:0.3rem;margin: 0px;}";
 const char IOTWEBCONF_HTML_HEAD_END[] PROGMEM     = "</head>\n<body>\n";
