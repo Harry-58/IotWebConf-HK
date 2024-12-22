@@ -313,7 +313,7 @@ String TextParameter::renderHtml(
   const char* type, bool hasValueFromPost, String valueFromPost)
 {
   TextParameter* current = this;
-  char parLength[12];
+  char parLength[13];  //Update:HK  war 12
 
   String pitem = getHtmlTemplate();
 
@@ -326,8 +326,8 @@ String TextParameter::renderHtml(
   int length = current->getLength()-1;     //Update:HK
   if (length > 0)
   {
-    char parLength[11];
-    snprintf(parLength, 11, "%d", length - 1); // To allow "\0" at the end of the string.
+    //char parLength[11];  //Update:HK
+    snprintf(parLength, 12, "%d", length - 1); // To allow "\0" at the end of the string.
     String maxLength = String("maxlength=") + parLength;
     pitem.replace("{l}", maxLength);
   }
@@ -350,7 +350,7 @@ String TextParameter::renderHtml(
   pitem.replace(
       "{s}",
       current->errorMessage == nullptr ? current->getId() : "de"); //Update:HK 	  Div style class.   https://github.com/prampec/IotWebConf/compare/master...minou65:IotWebConf:master
-  pitem.replace(                                       
+  pitem.replace(
       "{e}",
       current->errorMessage == nullptr ? "" : current->errorMessage);
 
@@ -495,8 +495,8 @@ String CheckboxParameter::renderHtml(
   {
     this->customHtml = nullptr;
   }
-  
-  
+
+
   return TextParameter::renderHtml("checkbox", true, "selected");
 }
 
