@@ -80,7 +80,11 @@ bool IotWebConf::init()
     if (!digitalRead(this->_configPin)) {  //UPDATE:HK entprellen
        delay(50);
     }
-    this->_forceDefaultPassword = (digitalRead(this->_configPin) == LOW);
+    if (!digitalRead(this->_configPin)){  //UPDATE:HK
+        //this->_forceDefaultPassword = (digitalRead(this->_configPin) == LOW);
+        this->_forceDefaultPassword = true;
+        Serial.println("Config-Pin pressed");
+    }
   }
   if (IOTWEBCONF_STATUS_ENABLED)
   {
@@ -656,11 +660,9 @@ void IotWebConf::endMDns(NetworkState oldState)
 /**
  * What happens, when a state changed...
  */
-void IotWebConf::stateChanged(NetworkState oldState, NetworkState newState)
-{
-//  updateOutput();
-  switch (newState)
-  {
+void IotWebConf::stateChanged(NetworkState oldState, NetworkState newState) {
+  //  updateOutput();
+  switch (newState) {
     case OffLine:
       endMDns(oldState);
       WiFi.disconnect(true);
@@ -669,64 +671,52 @@ void IotWebConf::stateChanged(NetworkState oldState, NetworkState newState)
       break;
     case ApMode:
     case NotConfigured:
-      if (newState == ApMode)
-      {
-        this->blinkInternal(300, 90);
-      }
-      else
-      {
+      if (newState == ApMode) {
+        if (!digitalRead(this->_configPin)) {  // UPDATE:HK  Wenn Configpin dann langsamer Blinken
+          this->blinkInternal(600, 90);
+        } else {
+          this->blinkInternal(200, 90);
+        }
+      } else {
         this->blinkInternal(300, 50);
       }
-      if ((oldState == Connecting) ||
-        (oldState == OnLine))
-      {
+      if ((oldState == Connecting) || (oldState == OnLine)) {
         endMDns(oldState);
         WiFi.disconnect(true);
       }
       setupAp();
-      if (this->_updateServerSetupFunction != nullptr)
-      {
+      if (this->_updateServerSetupFunction != nullptr) {
         this->_updateServerSetupFunction(this->_updatePath);
       }
       this->_webServerWrapper->begin();
       this->_apConnectionState = NoConnections;
-      this->_apStartTimeMs = millis();
+      this->_apStartTimeMs     = millis();
 #ifdef IOTWEBCONF_DEBUG_TO_SERIAL
-      if (mustStayInApMode())
-      {
-        if (this->_forceDefaultPassword)
-        {
+      if (mustStayInApMode()) {
+        if (this->_forceDefaultPassword) {
           Serial.println(F("Default password was forced."));
         }
-        if (this->_apPassword[0] == '\0')
-        {
+        if (this->_apPassword[0] == '\0') {
           Serial.println(F("AP password was not set."));
         }
-        if (this->_wifiParameters._wifiSsid[0] == '\0')
-        {
+        if (this->_wifiParameters._wifiSsid[0] == '\0') {
           Serial.println(F("WiFi SSID was not set."));
         }
-        if (this->_forceApMode)
-        {
+        if (this->_forceApMode) {
           Serial.println(F("AP was forced."));
         }
         Serial.println(F("Will stay in AP mode."));
-      }
-      else
-      {
+      } else {
         Serial.print(F("AP timeout (ms): "));
         Serial.println(this->_apTimeoutMs);
       }
 #endif
       break;
     case Connecting:
-      if ((oldState == ApMode) ||
-          (oldState == NotConfigured))
-      {
+      if ((oldState == ApMode) || (oldState == NotConfigured)) {
         stopAp();
       }
-      if ((oldState == Boot) && (this->_updateServerSetupFunction != nullptr))
-      {
+      if ((oldState == Boot) && (this->_updateServerSetupFunction != nullptr)) {
         // We've skipped AP mode, so update server needs to be set up now.
         this->_updateServerSetupFunction(this->_updatePath);
       }
@@ -735,13 +725,13 @@ void IotWebConf::stateChanged(NetworkState oldState, NetworkState newState)
 #ifdef IOTWEBCONF_DEBUG_TO_SERIAL
       Serial.print("Connecting to [");
       Serial.print(this->_wifiAuthInfo.ssid);
-# ifdef IOTWEBCONF_DEBUG_PWD_TO_SERIAL
+#ifdef IOTWEBCONF_DEBUG_PWD_TO_SERIAL
       Serial.print("] with password [");
       Serial.print(this->_wifiAuthInfo.password);
       Serial.println("]");
-# else
+#else
       Serial.println(F("] (password is hidden)"));
-# endif
+#endif
       Serial.print(F("WiFi timeout (ms): "));
       Serial.println(this->_wifiConnectionTimeoutMs);
 #endif
@@ -754,28 +744,24 @@ void IotWebConf::stateChanged(NetworkState oldState, NetworkState newState)
       WiFi.setHostname(this->_thingName);
       WiFi.mode(WIFI_STA);
 #endif
-      this->_wifiConnectionHandler(
-          this->_wifiAuthInfo.ssid, this->_wifiAuthInfo.password);
+      this->_wifiConnectionHandler(this->_wifiAuthInfo.ssid, this->_wifiAuthInfo.password);
       break;
     case OnLine:
       // -- Initialize mdns after network connection
 #ifdef IOTWEBCONF_CONFIG_USE_MDNS
       MDNS.begin(this->_thingName);
       MDNS.addService("http", "tcp", IOTWEBCONF_CONFIG_USE_MDNS);
-# ifdef IOTWEBCONF_DEBUG_TO_SERIAL
+#ifdef IOTWEBCONF_DEBUG_TO_SERIAL
       Serial.printf("Active mDNS services: %d \n", MDNS.queryService("http", "tcp"));
-# endif
+#endif
 #endif
       this->blinkInternal(8000, 2);
-      if (this->_updateServerUpdateCredentialsFunction != nullptr)
-      {
-        this->_updateServerUpdateCredentialsFunction(
-            IOTWEBCONF_ADMIN_USER_NAME, this->_apPassword);
+      if (this->_updateServerUpdateCredentialsFunction != nullptr) {
+        this->_updateServerUpdateCredentialsFunction(IOTWEBCONF_ADMIN_USER_NAME, this->_apPassword);
       }
       this->_webServerWrapper->begin();
       IOTWEBCONF_DEBUG_LINE(F("Accepting connection"));
-      if (this->_wifiConnectionCallback != nullptr)
-      {
+      if (this->_wifiConnectionCallback != nullptr) {
         this->_wifiConnectionCallback();
       }
       break;
